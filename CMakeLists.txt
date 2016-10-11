@@ -72,7 +72,7 @@ if(${OS} STREQUAL "posix")
   add_definitions(-DOS_POSIX)
   add_definitions(-DOS_LINUX)
 
-  set(CMAKE_CXX_FLAGS "-fPIC -std=gnu++0x -Wall -Werror -Wno-deprecated-declarations -Wuninitialized -Wvla")
+  set(CMAKE_CXX_FLAGS "-fPIC -std=gnu++0x -Wall -Werror -Wno-sign-compare -Wno-deprecated-declarations -Wuninitialized -Wvla")
   set(CMAKE_CXX_FLAGS_RELEASE " -DNDEBUG -s -O2")
   set(CMAKE_CXX_FLAGS_DEBUG   " -DDEBUG -g3 -ggdb3")
   set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
