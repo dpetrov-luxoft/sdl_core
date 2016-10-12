@@ -23,11 +23,23 @@ addons:
     - cmake
     - html2text
     - clang-format-3.6
+    - gdb
+    - apport
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get -q -y install libavahi-client-dev bluez-tools sqlite3 libsqlite3-dev automake1.11
   - wget http://archive.ubuntu.com/ubuntu/pool/main/l/lcov/lcov_1.11-3_all.deb
   - sudo dpkg -i lcov_1.11-3_all.deb
+  - ulimit -c
+  - ulimit -a -S
+  - ulimit -a -H
+install:
+  # Set the core file limit to unlimited so a core file is generated upon crash
+  - ulimit -c unlimited -S
+  - ulimit -c
+  - ulimit -a -S
+  - ulimit -a -H
+  - cat /proc/sys/kernel/core_pattern
 script:
   - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
   - bash -e tools/infrastructure/check_style.sh
@@ -35,6 +47,7 @@ script:
   - mkdir build && cd build && cmake ../ -DBUILD_TESTS=ON -DENABLE_GCOV=ON && make install -j$("nproc")
   - sudo ldconfig
   - make test
+  - for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/test core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done;
   - bash ../tools/infrastructure/show_disabled.sh
   - bash -ex ../tools/infrastructure/collect_coverage.sh ./
 env:
